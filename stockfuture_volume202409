@@ -1,0 +1,69 @@
+
+Sub hjJSVol_240911()
+    Dim wsSrc1 As Worksheet, wsSrc2 As Worksheet
+    Dim wsDest1 As Worksheet, wsDest2 As Worksheet
+    Dim cellSrc As Range
+    Dim today As String
+    
+     ' 시트 설정
+    Set wsSrc1 = ThisWorkbook.Sheets("Sheet2")
+    Set wsSrc2 = ThisWorkbook.Sheets("Sheet1")
+    Set wsDest1 = ThisWorkbook.Sheets("주선거래량(차)")
+    Set wsDest2 = ThisWorkbook.Sheets("주선거래량(근)")
+    
+    ' 오늘 날짜 설정
+    today = Format(Date, "mm.dd")
+    
+    ' '주선거래량(차)' 시트 처리
+    ' 주선거래량(차) 시트의 F열 전체 복사하여 F1 셀에 삽입
+    wsDest1.Columns("F").Copy
+    wsDest1.Range("F1").Insert Shift:=xlDown
+    
+    ' Sheet2의 E1에 오늘 날짜 입력
+    wsSrc1.Cells(1, "E").Value = "'" & today
+    
+    ' Sheet2의 E3:E260 중 값이 없으면 0으로 채우기
+    For Each cellSrc In wsSrc1.Range("E3:E259")
+        If IsEmpty(cellSrc) Then
+            cellSrc.Value = 0
+        End If
+    Next cellSrc
+    
+    ' Sheet2의 E1:E23를 주선거래량(차) 시트의 F1에 붙여넣기
+    wsSrc1.Range("E1:E259").Copy Destination:=wsDest1.Range("F1")
+    
+
+    
+    ' 주선거래량(차) 시트의 G226:G231을 F226에 붙여넣기
+    wsDest1.Range("G270:G275").Copy Destination:=wsDest1.Range("F270")
+    
+    ' '주선거래량(근)' 시트 처리
+    ' 주선거래량(근) 시트의 F열 전체 복사하여 F1 셀에 삽입
+    wsDest2.Columns("F").Copy
+    wsDest2.Range("F1").Insert Shift:=xlDown
+    
+    ' Sheet1의 E1에 오늘 날짜 입력
+    wsSrc2.Cells(1, "E").Value = "'" & today
+    
+    ' Sheet1의 E3:E259 중 값이 없으면 0으로 채우기
+    For Each cellSrc In wsSrc2.Range("E3:E259")
+        If IsEmpty(cellSrc) Then
+            cellSrc.Value = 0
+        End If
+    Next cellSrc
+    
+    ' Sheet1의 E1:E23를 주선거래량(근) 시트의 F1에 붙여넣기
+    wsSrc2.Range("E1:E259").Copy Destination:=wsDest2.Range("F1")
+    
+
+  
+    
+    ' 주선거래량(근) 시트의 G226:G231을 F226에 붙여넣기
+    wsDest2.Range("G270:G275").Copy Destination:=wsDest2.Range("F270")
+    
+    ' 완료 메시지
+    MsgBox "날짜와 잔존일 확인후 시트삭제"
+End Sub
+
+
+
