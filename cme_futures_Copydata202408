@@ -1,0 +1,89 @@
+Sub CopyData정렬1()
+
+    Dim wsSource As Worksheet
+    Dim wsTarget As Worksheet
+    Dim lastRow As Long
+    
+    ' 기존 시트 이름 설정
+    Set wsSource = ThisWorkbook.Sheets("3값으로")
+    
+    ' 새 시트 추가 및 이름 설정
+    Set wsTarget = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+    wsTarget.Name = "4시고저종 정렬"
+    
+    ' 데이터 복사
+    With wsSource
+        lastRow = .Cells(.Rows.Count, "A").End(xlUp).Row
+        
+        ' 날짜 열 복사
+        .Range("A1:A" & lastRow).Copy wsTarget.Range("A1")
+        .Range("A1:A" & lastRow).Copy wsTarget.Range("L1")
+        .Range("A1:A" & lastRow).Copy wsTarget.Range("W1")
+        .Range("A1:A" & lastRow).Copy wsTarget.Range("AH1")
+        
+        ' 교보
+        .Range("B1:B" & lastRow).Copy wsTarget.Range("B1")
+        .Range("C1:C" & lastRow).Copy wsTarget.Range("M1")
+        .Range("D1:D" & lastRow).Copy wsTarget.Range("X1")
+        .Range("E1:E" & lastRow).Copy wsTarget.Range("AI1")
+        
+        ' LS-이베스트
+        .Range("G1:G" & lastRow).Copy wsTarget.Range("C1")
+        .Range("H1:H" & lastRow).Copy wsTarget.Range("N1")
+        .Range("I1:I" & lastRow).Copy wsTarget.Range("Y1")
+        .Range("J1:J" & lastRow).Copy wsTarget.Range("AJ1")
+        
+        ' NH
+        .Range("L1:L" & lastRow).Copy wsTarget.Range("D1")
+        .Range("M1:M" & lastRow).Copy wsTarget.Range("O1")
+        .Range("N1:N" & lastRow).Copy wsTarget.Range("Z1")
+        .Range("O1:O" & lastRow).Copy wsTarget.Range("AK1")
+        
+        ' 키움
+        .Range("Q1:Q" & lastRow).Copy wsTarget.Range("H1")
+        .Range("R1:R" & lastRow).Copy wsTarget.Range("S1")
+        .Range("S1:S" & lastRow).Copy wsTarget.Range("AD1")
+        .Range("T1:T" & lastRow).Copy wsTarget.Range("AO1")
+        
+        ' SI
+        .Range("V1:V" & lastRow).Copy wsTarget.Range("F1")
+        .Range("W1:W" & lastRow).Copy wsTarget.Range("Q1")
+        .Range("X1:X" & lastRow).Copy wsTarget.Range("AB1")
+        .Range("Y1:Y" & lastRow).Copy wsTarget.Range("AM1")
+        
+        ' 삼성
+        .Range("AA1:AA" & lastRow).Copy wsTarget.Range("I1")
+        .Range("AB1:AB" & lastRow).Copy wsTarget.Range("T1")
+        .Range("AC1:AC" & lastRow).Copy wsTarget.Range("AE1")
+        .Range("AD1:AD" & lastRow).Copy wsTarget.Range("AP1")
+        
+        ' 대신
+        .Range("AF1:AF" & lastRow).Copy wsTarget.Range("J1")
+        .Range("AG1:AG" & lastRow).Copy wsTarget.Range("U1")
+        .Range("AH1:AH" & lastRow).Copy wsTarget.Range("AF1")
+        .Range("AI1:AI" & lastRow).Copy wsTarget.Range("AQ1")
+        
+        ' 유진
+        .Range("AK1:AK" & lastRow).Copy wsTarget.Range("E1")
+        .Range("AL1:AL" & lastRow).Copy wsTarget.Range("P1")
+        .Range("AM1:AM" & lastRow).Copy wsTarget.Range("AA1")
+        .Range("AN1:AN" & lastRow).Copy wsTarget.Range("AL1")
+        
+        ' 유안타
+        .Range("AP1:AP" & lastRow).Copy wsTarget.Range("G1")
+        .Range("AQ1:AQ" & lastRow).Copy wsTarget.Range("R1")
+        .Range("AR1:AR" & lastRow).Copy wsTarget.Range("AC1")
+        .Range("AS1:AS" & lastRow).Copy wsTarget.Range("AN1")
+        
+        ' 하나
+        .Range("AU1:AU" & lastRow).Copy wsTarget.Range("K1")
+        .Range("AV1:AV" & lastRow).Copy wsTarget.Range("V1")
+        .Range("AW1:AW" & lastRow).Copy wsTarget.Range("AG1")
+        .Range("AX1:AX" & lastRow).Copy wsTarget.Range("AR1")
+    End With
+    
+End Sub
+
+
+
+
