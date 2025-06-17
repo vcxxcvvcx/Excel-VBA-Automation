@@ -1,0 +1,47 @@
+Sub RemoveWeekendsAndAlignData()
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("데이터(주말.휴일제외,틱단위)") 
+    Dim lastRow As Long
+    Dim i As Long, j As Integer
+    Dim dateCols As Variant
+    Dim currentDate As Variant
+    Dim isWeekend As Boolean
+
+    ' 날짜가 있는 열을 정의
+    dateCols = Array(1, 6, 11, 16, 21, 26, 31, 36, 41, 46) ' A, F, K, P, U, Z, AE, AJ, AO, AT 열
+
+    ' 마지막 행 찾기
+    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+    
+    ' 주말 데이터 제거
+    For i = lastRow To 2 Step -1
+        isWeekend = False
+        For j = LBound(dateCols) To UBound(dateCols)
+            currentDate = ws.Cells(i, dateCols(j)).Value
+            If IsDate(currentDate) Then
+                If Weekday(currentDate, vbMonday) >= 6 Then
+                    isWeekend = True
+                    Exit For
+                End If
+            End If
+        Next j
+        If isWeekend Then
+            ws.Rows(i).Delete
+        End If
+    Next i
+
+    ' 데이터 정렬 및 이동
+    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+    For i = 2 To lastRow
+        currentDate = ws.Cells(i, 1).Value
+        If IsDate(currentDate) Then
+            For j = LBound(dateCols) To UBound(dateCols)
+                If j > 0 Then ' 첫 번째 열(A)은 이미 정렬되어 있음
+                    ws.Cells(i, dateCols(j)).Value = currentDate
+                End If
+            Next j
+        End If
+    Next i
+End Sub
+'이 코드는 제대로 작동하지않음 혹은 엑셀 데이터가 너무 많음 
+
