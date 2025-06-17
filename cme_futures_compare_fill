@@ -1,0 +1,222 @@
+Sub CompareAndFill()
+    Dim lastRow As Long
+    Dim i As Long
+    
+    ' B열의 마지막 데이터가 있는 행을 찾습니다.
+    lastRow = Cells(Rows.Count, "B").End(xlUp).Row
+    
+    ' B~K 범위 내에서 값을 비교하고 출력합니다.
+    For i = 3 To lastRow
+        CompareAndOutput_BK i
+    Next i
+    
+    ' M~V 범위 내에서 값을 비교하고 출력합니다.
+    For i = 3 To lastRow
+        CompareAndOutput_MV i
+    Next i
+    
+    ' X~AG 범위 내에서 값을 비교하고 출력합니다.
+    For i = 3 To lastRow
+        CompareAndOutput_XAG i
+    Next i
+    
+    ' AI~AR 범위 내에서 값을 비교하고 출력합니다.
+    For i = 3 To lastRow
+        CompareAndOutput_AIAR i
+    Next i
+End Sub
+
+Sub CompareAndOutput_BK(rowIndex As Long)
+    Dim rangeValues As Variant
+    Dim valueCounts As Object
+    Dim maxCount As Long
+    Dim maxValue As Variant
+    Dim key As Variant
+    
+    ' B~K 범위 내의 값들을 배열에 저장합니다.
+    rangeValues = Range(Cells(rowIndex, 2), Cells(rowIndex, 11)).value
+    
+    ' 각 값의 개수를 셉니다.
+    Set valueCounts = CountValues(rangeValues)
+    
+    ' 가장 많이 등장하는 값을 찾습니다.
+    maxCount = 0
+    For Each key In valueCounts.Keys
+        If valueCounts(key) > maxCount Then
+            maxCount = valueCounts(key)
+            maxValue = key
+        End If
+    Next key
+    
+    ' 출력할 열을 결정하고 값을 입력합니다.
+    Select Case maxCount
+        Case 10
+            Cells(rowIndex, 40).value = maxValue
+        Case 9
+            Cells(rowIndex, 41).value = maxValue
+        Case 8
+            Cells(rowIndex, 42).value = maxValue
+        Case 7
+            Cells(rowIndex, 43).value = maxValue
+        Case 6
+            Cells(rowIndex, 44).value = maxValue
+        Case 5
+            Cells(rowIndex, 45).value = maxValue
+        Case 4
+            Cells(rowIndex, 46).value = maxValue
+        Case 3
+            Cells(rowIndex, 47).value = maxValue
+        Case 2
+            Cells(rowIndex, 48).value = maxValue
+    End Select
+End Sub
+
+Sub CompareAndOutput_MV(rowIndex As Long)
+    Dim rangeValues As Variant
+    Dim valueCounts As Object
+    Dim maxCount As Long
+    Dim maxValue As Variant
+    Dim key As Variant
+    
+    ' M~V 범위 내의 값들을 배열에 저장합니다.
+    rangeValues = Range(Cells(rowIndex, 13), Cells(rowIndex, 22)).value
+    
+    ' 각 값의 개수를 셉니다.
+    Set valueCounts = CountValues(rangeValues)
+    
+    ' 가장 많이 등장하는 값을 찾습니다.
+    maxCount = 0
+    For Each key In valueCounts.Keys
+        If valueCounts(key) > maxCount Then
+            maxCount = valueCounts(key)
+            maxValue = key
+        End If
+    Next key
+    
+    ' 출력할 열을 결정하고 값을 입력합니다.
+    Select Case maxCount
+        Case 10
+            Cells(rowIndex, 50).value = maxValue
+        Case 9
+            Cells(rowIndex, 51).value = maxValue
+        Case 8
+            Cells(rowIndex, 52).value = maxValue
+        Case 7
+            Cells(rowIndex, 53).value = maxValue
+        Case 6
+            Cells(rowIndex, 54).value = maxValue
+        Case 5
+            Cells(rowIndex, 55).value = maxValue
+        Case 4
+            Cells(rowIndex, 56).value = maxValue
+        Case 3
+            Cells(rowIndex, 57).value = maxValue
+        Case 2
+            Cells(rowIndex, 58).value = maxValue
+
+
+    End Select
+End Sub
+
+Sub CompareAndOutput_XAG(rowIndex As Long)
+    Dim rangeValues As Variant
+    Dim valueCounts As Object
+    Dim maxCount As Long
+    Dim maxValue As Variant
+    Dim key As Variant
+    
+    ' X~AG 범위 내의 값들을 배열에 저장합니다.
+    rangeValues = Range(Cells(rowIndex, 24), Cells(rowIndex, 33)).value
+    
+    ' 각 값의 개수를 셉니다.
+    Set valueCounts = CountValues(rangeValues)
+    
+    ' 가장 많이 등장하는 값을 찾습니다.
+    maxCount = 0
+    For Each key In valueCounts.Keys
+        If valueCounts(key) > maxCount Then
+            maxCount = valueCounts(key)
+            maxValue = key
+        End If
+    Next key
+    
+    ' 출력할 열을 결정하고 값을 입력합니다.
+    Select Case maxCount
+        Case 10
+            Cells(rowIndex, 60).value = maxValue
+        Case 9
+            Cells(rowIndex, 61).value = maxValue
+        Case 8
+            Cells(rowIndex, 62).value = maxValue
+        Case 7
+            Cells(rowIndex, 63).value = maxValue
+        Case 6
+            Cells(rowIndex, 64).value = maxValue
+        Case 5
+            Cells(rowIndex, 65).value = maxValue
+        Case 4
+            Cells(rowIndex, 66).value = maxValue
+        Case 3
+            Cells(rowIndex, 67).value = maxValue
+        Case 2
+            Cells(rowIndex, 68).value = maxValue
+
+    End Select
+End Sub
+
+Sub CompareAndOutput_AIAR(rowIndex As Long)
+    Dim rangeValues As Variant
+    Dim valueCounts As Object
+    Dim maxCount As Long
+    Dim maxValue As Variant
+    Dim key As Variant
+    
+    ' AI~AR 범위 내의 값들을 배열에 저장합니다.
+    rangeValues = Range(Cells(rowIndex, 35), Cells(rowIndex, 38)).value
+    
+    ' 각 값의 개수를 셉니다.
+    Set valueCounts = CountValues(rangeValues)
+    
+    ' 가장 많이 등장하는 값을 찾습니다.
+    maxCount = 0
+    For Each key In valueCounts.Keys
+        If valueCounts(key) > maxCount Then
+            maxCount = valueCounts(key)
+            maxValue = key
+        End If
+    Next key
+    
+    ' 출력할 열을 결정하고 값을 입력합니다.
+    Select Case maxCount
+        Case 4
+            Cells(rowIndex, 70).value = maxValue
+        Case 3
+            Cells(rowIndex, 71).value = maxValue
+        Case 2
+            Cells(rowIndex, 72).value = maxValue
+        
+    End Select
+End Sub
+
+Function CountValues(values As Variant) As Object
+    Dim counts As Object
+    Dim value As Variant
+    
+    ' 각 값의 등장 횟수를 세는 딕셔너리를 생성합니다.
+    Set counts = CreateObject("Scripting.Dictionary")
+    
+    ' 값의 개수를 셉니다.
+    For Each value In values
+        If Not IsEmpty(value) Then
+            If counts.exists(value) Then
+                counts(value) = counts(value) + 1
+            Else
+                counts(value) = 1
+            End If
+        End If
+    Next value
+    
+    ' 결과를 반환합니다.
+    Set CountValues = counts
+End Function
+
