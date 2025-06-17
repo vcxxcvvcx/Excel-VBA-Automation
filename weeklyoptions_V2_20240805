@@ -1,0 +1,112 @@
+Sub hjWeekly_V2()
+    Dim ws As Worksheet
+    Dim newWs As Worksheet
+    Dim mainWs As Worksheet
+    Dim lastRow As Long
+    Dim newWsRow As Long
+    Dim i As Long
+    Dim currentValue As Double
+    Dim previousValue As Double
+    Dim targetGridLine As Double
+    Dim output As String
+    Dim today As Date
+    Dim remainingDays As String
+    Dim maxRow As Long
+    Dim maxValue As Double
+    Dim crossedGridLines As Collection
+    Dim lastCrossingGridLine As Double
+    
+    ' 현재 시트 설정
+    Set ws = ThisWorkbook.Sheets("데이터")
+    Set mainWs = ThisWorkbook.Sheets("메인")
+    
+    ' 새로운 시트 생성
+    Set newWs = ThisWorkbook.Sheets.Add
+    newWs.Name = "Crossing Points"
+    newWsRow = 1 ' 새로운 시트의 행 번호 초기화
+    
+    ' AF열의 마지막 행 찾기
+    lastRow = ws.Cells(ws.Rows.Count, "AF").End(xlUp).Row
+    previousValue = ws.Cells(3, "AF").Value ' 초기값 설정
+    
+    ' 현재 날짜 설정
+    today = Date
+    
+    ' 잔존일 계산 (문자열 형태로 되어야함 - 빼기로 계산이 되면 틀린 것임)
+    remainingDays = mainWs.Range("BA2").Value & "-" & mainWs.Range("BB2").Value
+    
+    ' 데이터 시트의 AD3부터 끝까지 최대값 찾기
+    maxRow = 3
+    maxValue = ws.Cells(3, "AD").Value
+    For i = 4 To ws.Cells(ws.Rows.Count, "AD").End(xlUp).Row
+        If ws.Cells(i, "AD").Value > maxValue Then
+            maxValue = ws.Cells(i, "AD").Value
+            maxRow = i
+        End If
+    Next i
+    
+    ' 최대값 행 복사
+    ws.Rows(maxRow).Copy Destination:=newWs.Rows(newWsRow)
+    
+    ' AG열에 현재 날짜 추가
+    newWs.Cells(newWsRow, "AG").Value = today
+    
+    ' AH열에 잔존일 추가 (문자열 형태라 ' 추가함 - 삭제하지 말 것)
+    newWs.Cells(newWsRow, "AH").Value = "'" & remainingDays
+    
+    ' AI열에 MAX값 표시
+    newWs.Cells(newWsRow, "AI").Value = "MAX값"
+    
+    newWsRow = newWsRow + 1
+    
+    ' 교차점 찾기 및 값 복사
+    Set crossedGridLines = New Collection
+    lastCrossingGridLine = -1 ' 초기화
+    
+    For i = 4 To lastRow
+        currentValue = ws.Cells(i, "AF").Value
+        targetGridLine = Application.WorksheetFunction.Floor(currentValue + 0.625, 1.25) ' 1.25 간격의 가로줄 값 계산
+        
+        ' 가로줄 값을 처음으로 돌파하거나 터치하는 경우에만 교차점을 기록
+        If (previousValue < targetGridLine And currentValue >= targetGridLine) Or (previousValue > targetGridLine And currentValue <= targetGridLine) Then
+            ' Ensure unique crossings and avoid the same grid line value
+            If targetGridLine <> lastCrossingGridLine Then
+                ' 값 복사
+                ws.Range(ws.Cells(i, "A"), ws.Cells(i, "AF")).Copy Destination:=newWs.Cells(newWsRow, 1)
+                
+                ' AG열에 최대값 행의 날짜 값 추가
+                newWs.Cells(newWsRow, "AG").Value = today
+                
+                 ' AH열에 최대값 행의 잔존일 값 추가 (문자열 형태라 ' 추가함 - 삭제하지 말 것)
+                newWs.Cells(newWsRow, "AH").Value = "'" & remainingDays
+
+                
+                newWsRow = newWsRow + 1
+                
+                ' 교차점 정보 추가
+                output = output & "Row " & i & ": Cross Value " & targetGridLine & ", Actual Value " & currentValue & vbCrLf
+                
+                ' Update the previous crossing grid line
+                lastCrossingGridLine = targetGridLine
+            End If
+        End If
+        
+        ' Update previous value
+        previousValue = currentValue
+    Next i
+    
+    ' 교차점이 없는 경우 메시지 출력
+    If newWsRow = 2 Then
+        MsgBox "No crossing points found."
+    Else
+        ' 교차점 정보 시트에 추가
+        newWs.Cells(newWsRow, 1).Value = "-----"
+        newWsRow = newWsRow + 1
+        newWs.Cells(newWsRow, 1).Value = "Crossing Points:"
+        newWsRow = newWsRow + 1
+        newWs.Cells(newWsRow, 1).Value = output
+        MsgBox "Crossing points copied to new sheet 'Crossing Points'. 날짜와 잔존일은 참고만 하고 복사하지 말 것"
+
+    End If
+End Sub
+
