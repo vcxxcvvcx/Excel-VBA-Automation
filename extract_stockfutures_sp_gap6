@@ -1,0 +1,45 @@
+Sub 육_CP다운비교_프린트용()
+    Dim wsSource As Worksheet
+    Dim wsNew As Worksheet
+    Dim lastRowMS As Long
+    Dim lastRowAVAY As Long
+    Dim newSheetName As String
+
+    ' 원본 시트 설정
+    Set wsSource = ThisWorkbook.Sheets("CP다운비교")
+
+    ' 새로운 시트 생성
+    newSheetName = "새로운시트"
+    On Error Resume Next
+    Set wsNew = ThisWorkbook.Sheets(newSheetName)
+    On Error GoTo 0
+    If wsNew Is Nothing Then
+        Set wsNew = ThisWorkbook.Sheets.Add
+        wsNew.Name = newSheetName
+    End If
+    wsNew.Cells.Clear ' 기존 데이터 삭제
+
+    ' M열~S열 데이터를 G열에 붙여넣기
+    lastRowMS = wsSource.Cells(wsSource.Rows.Count, "M").End(xlUp).Row
+    wsSource.Range("M1:S" & lastRowMS).Copy
+    wsNew.Range("G1").PasteSpecial Paste:=xlPasteAll ' 원본 그대로 붙여넣기
+
+    ' AV열~AY열 데이터를 N열에 붙여넣기
+    lastRowAVAY = wsSource.Cells(wsSource.Rows.Count, "AV").End(xlUp).Row
+    wsSource.Range("AV1:AY" & lastRowAVAY).Copy
+    wsNew.Range("N1").PasteSpecial Paste:=xlPasteAll ' 원본 그대로 붙여넣기
+
+    ' 새로운 시트의 N1:P3 데이터 삭제
+    wsNew.Range("N1:P3").ClearContents
+
+    ' Q3 셀 서식을 소수점 0자리로 설정
+    wsNew.Range("Q3").NumberFormat = "0"
+
+    ' 시트 전체 글자 크기를 9로 통일
+    wsNew.Cells.Font.Size = 9
+
+    ' 메시지 출력
+    MsgBox "작업이 완료되었습니다!", vbInformation
+End Sub
+
+
