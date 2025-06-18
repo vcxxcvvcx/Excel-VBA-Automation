@@ -1,0 +1,42 @@
+Sub 오_마크업3_2_CP다운()
+
+    ' "마크업작업" 시트에서 A열부터 T열까지 복사
+    Sheets("마크업작업").Range("A:T").Copy
+    
+    ' "CP다운비교" 시트에서 AV열에 값으로 붙여넣기
+    With Sheets("CP다운비교").Range("AV1")
+        .PasteSpecial Paste:=xlPasteValues
+    End With
+
+    ' "CP다운비교" 시트에서 AY열~BN열까지 완전히 삭제
+    Sheets("CP다운비교").Range("AY:BN").Delete
+
+    ' "CP다운비교" 시트에서 AY4칸을 위로 밀어서 삭제
+    Sheets("CP다운비교").Range("AY4").Delete Shift:=xlUp
+
+    ' "CP다운비교" 시트에서 AY열을 소수점 4자리까지 표시
+    Sheets("CP다운비교").Columns("AY").NumberFormat = "0.0000"
+
+    ' AV4부터 AY열에 데이터가 있는 끝까지 영역 선택
+    Dim LastRow As Long
+    LastRow = Sheets("CP다운비교").Cells(Rows.Count, "AV").End(xlUp).Row ' AV열의 마지막 행 찾기
+
+    ' AV4부터 AY열까지 영역을 AV열 기준으로 오름차순 정렬
+    Sheets("CP다운비교").Sort.SortFields.Clear
+    Sheets("CP다운비교").Sort.SortFields.Add Key:=Range("AV4:AV" & LastRow), _
+        SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+
+    With Sheets("CP다운비교").Sort
+        .SetRange Range("AV4:AY" & LastRow)
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+     ' 정렬 작업 후 알림창 표시
+    MsgBox "x관련종목-가장큰값으로 변경,0.5보다작은값 수정//ay값(하방마진율)을수정하세요", vbInformation
+
+End Sub
+
+
