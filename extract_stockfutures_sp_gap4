@@ -1,0 +1,46 @@
+Sub 사_마크업_TU3()
+    Dim wsSrc As Worksheet
+    Dim wsDest As Worksheet
+    Dim LastRow As Long
+    Dim i As Long
+    
+    ' "233종목" 시트를 복사하여 "마크업작업" 시트를 생성
+    Set wsSrc = ThisWorkbook.Sheets("223종목")
+    
+    ' 기존 "마크업작업" 시트가 있으면 삭제하고 새로 복사
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    ThisWorkbook.Sheets("마크업작업").Delete
+    Application.DisplayAlerts = True
+    On Error GoTo 0
+    
+    ' "233종목" 시트를 복사하여 "마크업작업" 시트로 설정
+    wsSrc.Copy After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count)
+    Set wsDest = ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count)
+    wsDest.Name = "마크업작업"
+    
+    ' 마크업작업 시트 통째로 값으로 변환
+    wsDest.UsedRange.Value = wsDest.UsedRange.Value
+    
+    ' T, U 열 데이터 지우기
+    wsDest.Columns("T:U").ClearContents
+    
+    ' 마지막 데이터가 있는 행 찾기 (R열 기준)
+    LastRow = wsDest.Cells(wsDest.Rows.Count, "R").End(xlUp).Row
+    
+    ' T열에 수식 입력 (R열에 값이 있을 경우) 및 소수점 4자리로 표시
+    For i = 5 To LastRow Step 3
+        If wsDest.Cells(i, "R").Value <> "" Then
+            wsDest.Cells(i, "T").Formula = "=IF(I" & i + 1 & "<>"""",MAX(0,(I" & i & "-I" & i + 1 & ")/D" & i & "*100),""X"")"
+        End If
+    Next i
+    
+    ' T열을 소수점 4자리로 설정
+    wsDest.Columns("T").NumberFormat = "0.0000"
+    
+    ' 완료 메시지
+    MsgBox "마크업작업 시트 생성 및 수식 적용 완료I열 스프레드호가값을 수정하세요", vbInformation
+
+End Sub
+
+
