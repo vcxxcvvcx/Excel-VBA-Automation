@@ -1,0 +1,228 @@
+Sub hjWeekly_V3for8()
+    Dim ws As Worksheet
+    Dim newWs As Worksheet
+    Dim mainWs As Worksheet
+    Dim lastRow As Long
+    Dim newWsRow As Long
+    Dim i As Long, j As Long
+    Dim currentValue As Double
+    Dim previousValue As Double
+    Dim targetGridLine As Double
+    Dim output As String
+    Dim today As Date
+    'Dim remainingDays As String
+    Dim maxRow As Long, minRow As Long
+    Dim maxValue As Double, minValue As Double
+    Dim crossedGridLines As Collection
+    Dim lastCrossingGridLine As Double
+
+    Set ws = ThisWorkbook.Sheets("데이터")
+    Set mainWs = ThisWorkbook.Sheets("메인")
+    
+    Set newWs = ThisWorkbook.Sheets.Add
+    newWs.Name = "Crossing Points"
+    newWsRow = 1
+
+    lastRow = ws.Cells(ws.Rows.Count, "AF").End(xlUp).Row
+    previousValue = ws.Cells(3, "AF").Value
+
+    today = Date
+    'remainingDays = mainWs.Range("AA2").Value & "-" & mainWs.Range("AB2").Value
+
+    ' --- 최대값 찾기 ---
+    maxRow = 3
+    maxValue = ws.Cells(3, "AD").Value
+    For i = 4 To ws.Cells(ws.Rows.Count, "AD").End(xlUp).Row
+        If ws.Cells(i, "AD").Value > maxValue Then
+            maxValue = ws.Cells(i, "AD").Value
+            maxRow = i
+        End If
+    Next i
+    ws.Rows(maxRow).Copy Destination:=newWs.Rows(newWsRow)
+    newWs.Cells(newWsRow, "AG").Value = today
+    newWs.Cells(newWsRow, "AH").Value = mainWs.Range("AA2").Value
+    newWs.Cells(newWsRow, "AI").Value = mainWs.Range("AB2").Value
+    newWs.Cells(newWsRow, "AJ").Value = "MAX값"
+    newWs.Cells(newWsRow, "AL").Value = mainWs.Range("AE54").Value
+    newWsRow = newWsRow + 1
+
+    ' --- 최소값 찾기 ---
+    minRow = 3
+    minValue = ws.Cells(3, "AD").Value
+    For i = 4 To ws.Cells(ws.Rows.Count, "AD").End(xlUp).Row
+        If ws.Cells(i, "AD").Value < minValue Then
+            minValue = ws.Cells(i, "AD").Value
+            minRow = i
+        End If
+    Next i
+    ws.Rows(minRow).Copy Destination:=newWs.Rows(newWsRow)
+    newWs.Cells(newWsRow, "AG").Value = today
+    newWs.Cells(newWsRow, "AH").Value = mainWs.Range("AA2").Value
+    newWs.Cells(newWsRow, "AI").Value = mainWs.Range("AB2").Value
+    newWs.Cells(newWsRow, "AJ").Value = "MIN값"
+    newWs.Cells(newWsRow, "AL").Value = mainWs.Range("AE54").Value
+    newWsRow = newWsRow + 1
+
+    ' --- 중위값 계산 준비 ---
+    Dim adValues() As Double, negValues() As Double, posValues() As Double
+    Dim adCount As Long, negCount As Long, posCount As Long
+    Dim medianValue As Double, negMedian As Double, posMedian As Double
+    Dim temp As Double
+    Dim medianRow As Long, minDiff As Double, diff As Double
+
+    adCount = ws.Cells(ws.Rows.Count, "AD").End(xlUp).Row - 2
+    ReDim adValues(1 To adCount)
+    ReDim negValues(1 To adCount)
+    ReDim posValues(1 To adCount)
+
+    negCount = 0
+    posCount = 0
+
+    For i = 3 To 2 + adCount
+        Dim val As Double
+        val = ws.Cells(i, "AD").Value
+        adValues(i - 2) = val
+        If val < 0 Then
+            negCount = negCount + 1
+            negValues(negCount) = val
+        ElseIf val > 0 Then
+            posCount = posCount + 1
+            posValues(posCount) = val
+        End If
+    Next i
+
+    ' --- 정렬 (버블정렬) ---
+    ' 전체
+    For i = 1 To adCount - 1
+        For j = i + 1 To adCount
+            If adValues(i) > adValues(j) Then
+                temp = adValues(i)
+                adValues(i) = adValues(j)
+                adValues(j) = temp
+            End If
+        Next j
+    Next i
+    ' 음수
+    For i = 1 To negCount - 1
+        For j = i + 1 To negCount
+            If negValues(i) > negValues(j) Then
+                temp = negValues(i)
+                negValues(i) = negValues(j)
+                negValues(j) = temp
+            End If
+        Next j
+    Next i
+    ' 양수
+    For i = 1 To posCount - 1
+        For j = i + 1 To posCount
+            If posValues(i) > posValues(j) Then
+                temp = posValues(i)
+                posValues(i) = posValues(j)
+                posValues(j) = temp
+            End If
+        Next j
+    Next i
+
+    ' --- 전체 중위값 ---
+    If adCount Mod 2 = 1 Then
+        medianValue = adValues((adCount + 1) \ 2)
+    Else
+        medianValue = (adValues(adCount \ 2) + adValues(adCount \ 2 + 1)) / 2
+    End If
+    minDiff = 999999: medianRow = -1
+    For i = 3 To ws.Cells(ws.Rows.Count, "AD").End(xlUp).Row
+        diff = Abs(ws.Cells(i, "AD").Value - medianValue)
+        If diff < minDiff Then minDiff = diff: medianRow = i
+    Next i
+    If medianRow <> -1 Then
+        ws.Rows(medianRow).Copy Destination:=newWs.Rows(newWsRow)
+        newWs.Cells(newWsRow, "AG").Value = today
+        newWs.Cells(newWsRow, "AH").Value = mainWs.Range("AA2").Value
+        newWs.Cells(newWsRow, "AI").Value = mainWs.Range("AB2").Value
+        newWs.Cells(newWsRow, "AJ").Value = "중위값"
+        newWs.Cells(newWsRow, "AL").Value = mainWs.Range("AE54").Value
+        newWsRow = newWsRow + 1
+    End If
+
+    ' --- 음수 중위값 ---
+    If negCount > 0 Then
+        If negCount Mod 2 = 1 Then
+            negMedian = negValues((negCount + 1) \ 2)
+        Else
+            negMedian = (negValues(negCount \ 2) + negValues(negCount \ 2 + 1)) / 2
+        End If
+        minDiff = 999999: medianRow = -1
+        For i = 3 To ws.Cells(ws.Rows.Count, "AD").End(xlUp).Row
+            diff = Abs(ws.Cells(i, "AD").Value - negMedian)
+            If diff < minDiff Then minDiff = diff: medianRow = i
+        Next i
+        ws.Rows(medianRow).Copy Destination:=newWs.Rows(newWsRow)
+        newWs.Cells(newWsRow, "AG").Value = today
+        newWs.Cells(newWsRow, "AH").Value = mainWs.Range("AA2").Value
+        newWs.Cells(newWsRow, "AI").Value = mainWs.Range("AB2").Value
+        newWs.Cells(newWsRow, "AJ").Value = "음수 중위값"
+        newWs.Cells(newWsRow, "AL").Value = mainWs.Range("AE54").Value
+        newWsRow = newWsRow + 1
+    End If
+
+    ' --- 양수 중위값 ---
+    If posCount > 0 Then
+       If posCount Mod 2 = 1 Then
+           posMedian = posValues((posCount + 1) \ 2)
+        Else
+            posMedian = (posValues(posCount \ 2) + posValues(posCount \ 2 + 1)) / 2
+        End If
+        minDiff = 999999: medianRow = -1
+        For i = 3 To ws.Cells(ws.Rows.Count, "AD").End(xlUp).Row
+            diff = Abs(ws.Cells(i, "AD").Value - posMedian)
+            If diff < minDiff Then minDiff = diff: medianRow = i
+        Next i
+        ws.Rows(medianRow).Copy Destination:=newWs.Rows(newWsRow)
+        newWs.Cells(newWsRow, "AG").Value = today
+        newWs.Cells(newWsRow, "AH").Value = mainWs.Range("AA2").Value
+        newWs.Cells(newWsRow, "AI").Value = mainWs.Range("AB2").Value
+        newWs.Cells(newWsRow, "AJ").Value = "양수 중위값"
+        newWs.Cells(newWsRow, "AL").Value = mainWs.Range("AE54").Value
+        newWsRow = newWsRow + 1
+    End If
+
+    ' --- 교차점 찾기 ---
+    Set crossedGridLines = New Collection
+    lastCrossingGridLine = -1
+
+    For i = 4 To lastRow
+        currentValue = ws.Cells(i, "AF").Value
+        targetGridLine = Application.WorksheetFunction.Floor(currentValue + 0.625, 1.25)
+        If (previousValue < targetGridLine And currentValue >= targetGridLine) Or _
+           (previousValue > targetGridLine And currentValue <= targetGridLine) Then
+            If targetGridLine <> lastCrossingGridLine Then
+                ws.Range(ws.Cells(i, "A"), ws.Cells(i, "AF")).Copy Destination:=newWs.Cells(newWsRow, 1)
+                newWs.Cells(newWsRow, "AG").Value = today
+                newWs.Cells(newWsRow, "AH").Value = mainWs.Range("AA2").Value
+                newWs.Cells(newWsRow, "AI").Value = mainWs.Range("AB2").Value
+                newWs.Cells(newWsRow, "AL").Value = mainWs.Range("AE54").Value
+                newWsRow = newWsRow + 1
+                output = output & "Row " & i & ": Cross Value " & targetGridLine & ", Actual Value " & currentValue & vbCrLf
+                lastCrossingGridLine = targetGridLine
+            End If
+        End If
+        previousValue = currentValue
+    Next i
+
+    If newWsRow <= 6 Then
+        MsgBox "No crossing points found."
+    Else
+        newWs.Cells(newWsRow, 1).Value = "-----"
+        newWsRow = newWsRow + 1
+        newWs.Cells(newWsRow, 1).Value = "Crossing Points:"
+        newWsRow = newWsRow + 1
+        newWs.Cells(newWsRow, 1).Value = output
+        MsgBox "날짜와 잔존일은 참고만 하고 복사하지 말 것, max min 중위값확인."
+    End If
+End Sub
+
+
+
+
+
+
