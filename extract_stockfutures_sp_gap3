@@ -1,0 +1,73 @@
+Sub 삼_배당작업2_2_CP다운비교()
+
+    ' "배당작업" 시트에서 A~V열까지 복사
+    Sheets("배당작업").Range("A:V").Copy
+    
+    ' "CP다운비교" 시트에서 AN열에 값으로 붙여넣기
+    With Sheets("CP다운비교").Range("AN1")
+        .PasteSpecial Paste:=xlPasteValues
+    End With
+
+    ' "CP다운비교" 시트에서 AR열~BG열까지 삭제
+    Sheets("CP다운비교").Range("AR:BG").Delete
+
+    ' "CP다운비교" 시트에서 AQ4, AR4, AS4 한칸 위로 밀어 삭제
+    Sheets("CP다운비교").Range("AQ4:AS4").Delete Shift:=xlUp
+
+    ' AN4부터 AS열의 데이터 끝까지 오름차순 정렬
+    Dim LastRow As Long
+    LastRow = Sheets("CP다운비교").Cells(Rows.Count, "AN").End(xlUp).Row ' AN열의 마지막 행 찾기
+
+    ' AN4부터 AS열 끝까지 영역 선택 후 AN 기준 오름차순 정렬
+    Sheets("CP다운비교").Sort.SortFields.Clear
+    Sheets("CP다운비교").Sort.SortFields.Add Key:=Range("AN4:AN" & LastRow), _
+        SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+
+    With Sheets("CP다운비교").Sort
+        .SetRange Range("AN4:AS" & LastRow)
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+    ' AN5:AS225 영역 선택 후 AS열 기준 오름차순 정렬
+    Sheets("CP다운비교").Sort.SortFields.Clear
+    Sheets("CP다운비교").Sort.SortFields.Add Key:=Range("AS5:AS225"), _
+        SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+
+    With Sheets("CP다운비교").Sort
+        .SetRange Range("AN5:AS225")
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+    ' AN5에서 AS열의 값이 있는 마지막 행까지 AN열 기준으로 오름차순 정렬
+    Dim LastRowWithValues As Long
+    LastRowWithValues = Sheets("CP다운비교").Cells(Rows.Count, "AS").End(xlUp).Row ' AS열의 마지막 행 찾기
+
+    ' AN5부터 AS 마지막 행까지 영역을 AN 기준으로 오름차순 정렬
+    Sheets("CP다운비교").Sort.SortFields.Clear
+    Sheets("CP다운비교").Sort.SortFields.Add Key:=Range("AN5:AN" & LastRowWithValues), _
+        SortOn:=xlSortOnValues, Order:=xlAscending, DataOption:=xlSortNormal
+
+    With Sheets("CP다운비교").Sort
+        .SetRange Range("AN5:AS" & LastRowWithValues)
+        .Header = xlNo
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    
+    ' 정렬 작업 후 알림창 표시
+    MsgBox "확인후 as값을 ar로 이동,M~Q값을 채우기,중앙값AI채우기", vbInformation
+
+End Sub
+
+
+
