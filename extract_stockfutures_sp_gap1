@@ -1,0 +1,31 @@
+Sub 일_CP다운HTS지우기1()
+
+    ' "hts잔고" 시트에서 A:H열의 1행을 제외하고 모든 데이터 지우기
+    Dim wsHTS As Worksheet
+    Set wsHTS = ThisWorkbook.Sheets("hts잔고")
+    
+    wsHTS.Range("A2:H" & wsHTS.Cells(wsHTS.Rows.Count, "A").End(xlUp).Row).ClearContents
+
+    ' "CP다운비교" 시트에서 작업
+    Dim wsCP As Worksheet
+    Set wsCP = ThisWorkbook.Sheets("CP다운비교")
+    
+    Dim LastRow As Long
+    
+    ' AA열의 5행부터 끝까지 데이터를 0으로 설정
+    LastRow = wsCP.Cells(wsCP.Rows.Count, "AA").End(xlUp).Row
+    wsCP.Range("AA5:AA" & LastRow).Value = 0
+    
+    ' Y열의 5행부터 끝까지 데이터가 있는 경우 지우기
+    LastRow = wsCP.Cells(wsCP.Rows.Count, "Y").End(xlUp).Row
+    wsCP.Range("Y5:Y" & LastRow).ClearContents
+    
+    ' Z열의 5행부터 끝까지 데이터를 0으로 설정
+    LastRow = wsCP.Cells(wsCP.Rows.Count, "Z").End(xlUp).Row
+    wsCP.Range("Z5:Z" & LastRow).Value = 0
+
+    ' 완료 메시지
+    MsgBox "W1자본값을 수정하세요!"
+
+End Sub
+
